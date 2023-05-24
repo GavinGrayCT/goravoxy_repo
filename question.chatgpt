@@ -1,0 +1,6 @@
+I want a go prgram that uses gorillamux to create an HTTP reverse proxy
+Incoming: "localhost:8000 to port 9000
+Incoming: "localhost:8001 to port 9001
+Incoming: "3dogsfarm.co.za:80" to port 9002
+Incoming: "boldgear.capetown:80" to port 9003
+
