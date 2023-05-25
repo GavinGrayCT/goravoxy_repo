@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"log"
 	"net/http"
@@ -11,16 +12,21 @@ import (
 )
 
 func main() {
+	var hostA *string = flag.String("a", "localhost", "Host a url.")
+	var hostB *string = flag.String("b", "localhost", "Host b url.")
+	var portServing *string = flag.String("p", "80", "Serving Port Address.")
+	var targetAPort *string = flag.String("t", "9000", "Target port for Host a.")
+	var targetBPort *string = flag.String("u", "9001", "Target port for Host b.")
+	flag.Parse()
+
 	// Create a new router using Gorilla Mux
 	router := mux.NewRouter()
 	router.Use(loggingMiddleware)
 
 	// Define the mappings for the reverse proxy
 	mappings := map[string]string{
-		"localhost:8080":       "http://localhost:9000",
-		"127.0.0.1:8080":       "http://localhost:1986",
-		"3dogsfarm.co.za:80":   "http://localhost:9000",
-		"boldgear.capetown:80": "http://localhost:1986",
+		fmt.Sprintf("%s:%s", *hostA, *portServing): fmt.Sprintf("http://localhost:%s", *targetAPort),
+		fmt.Sprintf("%s:%s", *hostB, *portServing): fmt.Sprintf("http://localhost:%s", *targetBPort),
 	}
 
 	// Create the reverse proxy handler for each mapping
@@ -47,8 +53,8 @@ func main() {
 	}
 
 	// Start the HTTP server
-	log.Println("Reverse proxy is running on :8080")
-	log.Fatal(http.ListenAndServe(":8080", router))
+	log.Printf("Reverse proxy is running on :%s", *portServing)
+	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", *portServing), router))
 }
 
 func loggingMiddleware(next http.Handler) http.Handler {
