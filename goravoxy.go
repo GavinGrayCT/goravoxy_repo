@@ -42,14 +42,7 @@ func main() {
 		fmt.Printf("Target URL: %s\n", targetURL)
 		proxy := httputil.NewSingleHostReverseProxy(targetURL)
 
-		// Register the reverse proxy handler with the router
-		router.HandleFunc("/{path:.*}", func(w http.ResponseWriter, r *http.Request) {
-			// Update the request host to match the target host
-			r.Host = targetURL.Host
-
-			// Serve the request through the reverse proxy
-			proxy.ServeHTTP(w, r)
-		}).Host(incoming)
+		proxy.ServeHTTP(w, r)
 	}
 
 	// Start the HTTP server
